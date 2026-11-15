@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Home | Livraria</title><link rel="stylesheet" href="Style.css"></head>
+<body>
+<header class="topbar"><a class="brand" href="Home"><span>📚</span><strong>Livraria</strong></a>
+<nav><a class="active" href="Home">Livros</a><a href="Perfil">Meu perfil</a><a href="Usuarios">Leitores</a><a id="adminLink" href="Administrador" style="display:none">Administração</a><a class="logout" href="logout">Sair</a></nav></header>
+<main class="page">
+<section class="hero"><span class="eyebrow">CATÁLOGO</span><h1>Encontre sua próxima leitura</h1><p>Pesquise por título, autor ou categoria e salve os livros que despertarem seu interesse.</p></section>
+<section class="search-box"><form action="Home" method="get"><input id="busca" name="busca" placeholder="Pesquisar livro, autor ou categoria..." value=""><button class="btn" type="submit">Pesquisar</button></form></section>
+<section id="livros" class="book-grid"><p class="empty">Carregando livros...</p></section>
+</main>
+<script>
+const params = new URLSearchParams(location.search);
+const busca = params.get('busca') || '';
+document.getElementById('busca').value = busca;
+fetch('Home?modo=dados&busca=' + encodeURIComponent(busca))
+.then(r => r.json()).then(livros => {
+ const area=document.getElementById('livros');
+ area.innerHTML='';
+ if(!livros.length){ area.innerHTML='<p class="empty">Nenhum livro encontrado.</p>'; return; }
+ livros.forEach(l => {
+   const preco=l.preco.toFixed(2).replace('.',',');
+   area.insertAdjacentHTML('beforeend', `<article class="book-card">
+     <img src="${escapeHtml(l.imagem)}" alt="Capa de ${escapeHtml(l.titulo)}" onerror="this.src='https://via.placeholder.com/300x430?text=Livro'">
+     <div class="book-info"><span class="book-category">${escapeHtml(l.categoria)}</span>
+     <h2>${escapeHtml(l.titulo)}</h2><h3>${escapeHtml(l.autor)}</h3><p>${escapeHtml(l.descricao)}</p>
+     <strong class="price">R$ ${preco}</strong>
+     <form action="Home" method="post"><input type="hidden" name="acao" value="favorito"><input type="hidden" name="id" value="${l.id}">
+     <button class="btn ${l.favorito?'saved':''}" type="submit">${l.favorito?'♥ Remover dos salvos':'♡ Salvar livro'}</button></form></div></article>`);
+ });
+}).catch(()=>document.getElementById('livros').innerHTML='<p class="empty">Não foi possível carregar o catálogo.</p>');
+function escapeHtml(v){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+if(window.performance && performance.getEntriesByType('navigation')[0]?.type==='reload') {}
+</script>
+<script>
+fetch('Perfil?modo=dados').then(r=>r.json()).then(d=>{
+  if(d.perfil==='ADMIN'){const a=document.getElementById('adminLink'); if(a) a.style.display='inline-block';}
+}).catch(()=>{});
+</script></body></html>

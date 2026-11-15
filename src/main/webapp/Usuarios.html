@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Leitores | Livraria</title><link rel="stylesheet" href="Style.css"></head>
+<body><header class="topbar"><a class="brand" href="Home"><span>📚</span><strong>Livraria</strong></a><nav><a href="Home">Livros</a><a href="Perfil">Meu perfil</a><a class="active" href="Usuarios">Leitores</a><a id="adminLink" href="Administrador" style="display:none">Administração</a><a class="logout" href="logout">Sair</a></nav></header>
+<main class="page"><section class="panel"><span class="eyebrow">COMUNIDADE</span><h1>Comunidade de leitores</h1><p>Conheça os leitores cadastrados e a quantidade de livros que cada um mantém salvos. Senhas e dados sensíveis nunca são exibidos.</p>
+<div id="usuarios" class="user-list"><p class="empty">Carregando leitores...</p></div>
+<div class="actions"><a class="btn" href="Home">Voltar aos livros</a><a class="btn secondary" href="Perfil">Meu perfil</a></div></section></main>
+<script>
+fetch('Usuarios?modo=dados').then(r=>r.json()).then(lista=>{
+ const area=document.getElementById('usuarios'); area.innerHTML='';
+ lista.forEach(u=>area.insertAdjacentHTML('beforeend',`<article><div><b>${esc(u.usuario)}</b><small class="muted">Leitor cadastrado</small></div><span>${u.salvos} livro${u.salvos===1?'':'s'} salvo${u.salvos===1?'':'s'}</span></article>`));
+}).catch(()=>document.getElementById('usuarios').innerHTML='<p class="empty">Não foi possível carregar a comunidade.</p>');
+function esc(v){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+</script><script>
+fetch('Perfil?modo=dados').then(r=>r.json()).then(d=>{
+  if(d.perfil==='ADMIN'){const a=document.getElementById('adminLink'); if(a) a.style.display='inline-block';}
+}).catch(()=>{});
+</script></body></html>

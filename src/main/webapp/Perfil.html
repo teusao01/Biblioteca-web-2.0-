@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Perfil | Livraria</title><link rel="stylesheet" href="Style.css"></head>
+<body><header class="topbar"><a class="brand" href="Home"><span>📚</span><strong>Livraria</strong></a><nav><a href="Home">Livros</a><a class="active" href="Perfil">Meu perfil</a><a href="Usuarios">Leitores</a><a id="adminLink" href="Administrador" style="display:none">Administração</a><a class="logout" href="logout">Sair</a></nav></header>
+<main class="page"><section class="panel">
+<span class="eyebrow">MINHA CONTA</span><h1>Olá, <span id="nomeUsuario">leitor</span>!</h1><p>Veja seus dados e os livros que você decidiu guardar para ler depois.</p>
+<div class="profile-grid"><div><small>Usuário</small><strong id="usuario">Carregando...</strong></div><div><small>Tipo de conta</small><strong id="perfil">Carregando...</strong></div><div><small>Livros salvos</small><strong id="quantidade">0</strong></div><div><small>Autenticação</small><strong>HttpSession ativa</strong></div></div>
+<h2 class="section-title">Meus livros salvos</h2><div id="salvos" class="book-grid compact"><p class="empty">Carregando...</p></div>
+<div class="actions"><a class="btn" href="Home">Explorar livros</a><a class="btn secondary" href="Usuarios">Comunidade de leitores</a></div>
+</section></main>
+<script>
+fetch('Perfil?modo=dados').then(r=>r.json()).then(d=>{
+ document.getElementById('usuario').textContent=d.usuario;
+ document.getElementById('nomeUsuario').textContent=d.usuario;
+ document.getElementById('perfil').textContent=d.perfil;
+ document.getElementById('quantidade').textContent=d.salvos.length;
+ const a=document.getElementById('salvos'); a.innerHTML='';
+ if(!d.salvos.length){a.innerHTML='<p class="empty">Você ainda não salvou nenhum livro.</p>';return;}
+ d.salvos.forEach(l=>a.insertAdjacentHTML('beforeend',`<article class="book-card mini"><img src="${esc(l.imagem)}" alt=""><div class="book-info"><span class="book-category">${esc(l.categoria)}</span><h2>${esc(l.titulo)}</h2><h3>${esc(l.autor)}</h3><strong class="price">R$ ${l.preco.toFixed(2).replace('.',',')}</strong></div></article>`));
+}).catch(()=>{});
+function esc(v){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+fetch('Home?modo=dados').then(()=>{}); // mantém o catálogo sob o mesmo controller
+</script><script>
+fetch('Perfil?modo=dados').then(r=>r.json()).then(d=>{
+  if(d.perfil==='ADMIN'){const a=document.getElementById('adminLink'); if(a) a.style.display='inline-block';}
+}).catch(()=>{});
+</script></body></html>

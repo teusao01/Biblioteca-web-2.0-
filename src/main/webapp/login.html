@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Login | Livraria</title><link rel="stylesheet" href="Style.css"></head>
+<body class="login-page">
+<main class="login-card">
+  <div class="brand"><span>📚</span><strong>Livraria</strong></div>
+  <h1>Bem-vindo à Livraria</h1>
+  <p class="subtitle">Entre para descobrir livros, salvar seus favoritos e acompanhar sua coleção.</p>
+  <form action="login" method="post" class="form">
+    <label>Usuário<input name="usuario" type="text" placeholder="Digite seu usuário" required></label>
+    <label>Senha<input name="senha" type="password" placeholder="Digite sua senha" required></label>
+    <button class="btn" type="submit">Entrar</button>
+  </form>
+  <div class="hint">Acesso de teste: <b>teodoro / 1234</b> (administrador) ou <b>athaides / 1234</b> (usuário).</div>
+<div id="erro" class="error" aria-live="polite"></div>
+</main>
+<script>
+const erro = new URLSearchParams(location.search).get('erro');
+if (erro) document.getElementById('erro').textContent =
+  erro === 'campos' ? 'Preencha usuário e senha.' : 'Usuário ou senha inválidos.';
+</script>
+</body></html>
